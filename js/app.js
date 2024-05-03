@@ -38,19 +38,19 @@ function showAlert(message) {
 
 }
 
-function searchImages() {
+async function searchImages() {
     const termSearch = document.querySelector('#term').value;
-    const key = '';
+    const key = '43671750-9765126e3218092db563323a2';
     const url = `https://pixabay.com/api/?key=${key}&q=${termSearch}&per_page=${itemsPerPage}&page=${actualPage}`;
 
-
-    fetch(url)
-        .then(res => res.json())
-        .then(res => {
-            totalPages = calculatePages(res.totalHits)
-            console.log(totalPages);
-            showImages(res.hits)
-        })
+    try {
+        const req = await fetch(url);
+        const res = await req.json();
+        totalPages = calculatePages(res.totalHits)
+        showImages(res.hits);
+    } catch (error) {
+        console.log(error);
+    }
 }
 
 // Pages generator
@@ -89,7 +89,7 @@ function showImages(imagesArray) {
        `
     });
     // Clean child
-    while(paginationDiv.firstChild) {
+    while (paginationDiv.firstChild) {
         paginationDiv.removeChild(paginationDiv.firstChild)
     }
     showPagesIterator();
@@ -99,9 +99,9 @@ function showPagesIterator() {
     iterator = createPages(totalPages);
     console.log(iterator.next().done);
 
-    while(true) {
-        const {value, done} = iterator.next();
-        if(done) {
+    while (true) {
+        const { value, done } = iterator.next();
+        if (done) {
             return;
         } else { // create button for each element
             const buttonPage = document.createElement('a');
